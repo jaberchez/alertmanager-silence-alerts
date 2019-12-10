@@ -1,0 +1,1 @@
+kubectl create configmap alertmanager-conf --from-file=alertmanager.yml --namespace alertmanager

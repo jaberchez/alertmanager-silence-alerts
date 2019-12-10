@@ -1,0 +1,35 @@
+########################################################################################################
+# Descripcion: Service for alertmanager-third
+########################################################################################################
+
+# Main
+#*******************************************************************************************************
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: alertmanager-third
+  namespace: alertmanager
+
+  labels:
+    app: alertmanager
+    name: alertmanager-third
+
+spec:
+  ports:
+    - name: http
+      port: 9093
+      protocol: TCP
+      targetPort: 9093
+
+    - name: cluster
+      port: 9094
+      protocol: TCP
+      targetPort: 9094
+
+  selector:
+    app: alertmanager
+    name: alertmanager-third
+
+  type: ClusterIP
+#*******************************************************************************************************

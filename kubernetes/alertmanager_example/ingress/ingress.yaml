@@ -1,0 +1,43 @@
+########################################################################################################
+# Descripcion: Ingress rules for alertmanagers
+########################################################################################################
+
+# Main
+#*******************************************************************************************************
+apiVersion: extensions/v1beta1
+kind: Ingress
+
+metadata:
+  name: alertmanager
+  namespace: alertmanager
+
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: "nginx"
+
+spec:
+  rules:
+    - host: alertmanager-first.example.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: alertmanager-first
+            servicePort: 9093
+
+    - host: alertmanager-second.example.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: alertmanager-second
+            servicePort: 9093
+
+    - host: alertmanager-third.example.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: alertmanager-third
+            servicePort: 9093
+#*******************************************************************************************************

@@ -1,0 +1,69 @@
+# Example file configuration for silence-alerts.py
+#
+# Notice:
+#    For each alert you must provide service or alertname (or both) and alertname (mandatory)
+#
+#    when clause admits:
+#     everyDay
+#     everyMonday
+#     everyTuesday
+#     everyWednesday
+#     everyThursday
+#     everyFriday
+#     everySaturday
+#     everySunday
+#     fixed
+#
+#    If you need to use fixed is better do it through alertmanager gui  
+
+# Global settings. It can be overwrite in alerts
+global:
+  comment: 'Maintenance'
+  author: 'jenkins'
+
+# List of alerts to silence
+alerts:
+  - labels: 
+      - name: 'service'
+        value: 'Service Example'
+        type:  'string'
+
+      - name: 'alertname'
+        value: 'TestAlert'
+        type:  'string'
+
+      - name: 'severity'
+        value: 'critical'
+        type:  'string'
+
+      - name: 'hostname'
+        value: 'svr.+'
+        type:  'regex'
+
+    when: 
+      everyDay: 
+        timeStart: '22:00:00'
+        timeEnd: '07:00:00'
+     
+        # Exceptions only allowed if when is everyDay
+        #except: ['sunday', 'tuesday']
+
+    comment: 'my own comment'
+    author: 'user'
+
+  - labels: 
+      - name: 'service'
+        value: 'Disk Usage'
+        type:  'regex'
+
+      - name: 'alertname'
+        value: '.+DisksUsage.+'
+        type:  'regex'
+
+    when: 
+      fixed:
+        dateStart: '13-02-2019'
+        timeStart: '22:00:00'
+
+        dateEnd: '26-07-2019'
+        timeEnd: '07:00:00'

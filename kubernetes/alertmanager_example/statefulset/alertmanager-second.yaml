@@ -1,0 +1,82 @@
+########################################################################################################
+# Descripcion: Statefulset alertmanager-second
+########################################################################################################
+
+# Main
+#*******************************************************************************************************
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: alertmanager-second
+  namespace: alertmanager
+
+spec:
+  serviceName: "alertmanager"
+
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: "alertmanager"
+      name: 'alertmanager-second'
+
+  template:
+    metadata:
+      labels:
+        app: "alertmanager"
+        name: 'alertmanager-second'
+
+    spec:
+      containers:
+        - name: alertmanager
+          image: prom/alertmanager:v0.19.0
+          args:
+            - "--config.file=/etc/alertmanager/alertmanager.yml"
+            - "--cluster.listen-address=0.0.0.0:9094"
+            - "--cluster.peer=alertmanager-first-0.alertmanager.alertmanager.svc:9094"
+            - "--cluster.peer=alertmanager-third-0.alertmanager.alertmanager.svc:9094"
+
+          ports:
+            - name: web
+              containerPort: 9093
+
+            - name: cluster
+              containerPort: 9094
+
+          imagePullPolicy: 'Always'
+
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: web
+
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 15
+
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: web
+
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+            periodSeconds: 1
+
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/alertmanager/
+
+            #- name: templates-volume
+            #  mountPath: /etc/alertmanager_templates/
+
+      volumes:
+        - name: config-volume
+          configMap:
+            defaultMode: 420
+            name: alertmanager-conf
+
+        - name: templates-volume
+          emptyDir: {}
+#*******************************************************************************************************
